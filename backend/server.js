@@ -39,7 +39,7 @@ app.get(ADMIN_PATH, (req, res) => {
   res.sendFile(path.join(FRONTEND_DIR, 'admin.html'));
 });
 
-app.post('/api/appointments', (req, res) => {
+app.post('frontend-iota-green-45.vercel.app/api/appointments', (req, res) => {
   const { service, name, phone, email } = req.body;
   if (!service || !name || !phone || !email) {
     return res.status(400).json({ error: 'Missing required fields.' });

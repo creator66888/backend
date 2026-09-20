@@ -10,7 +10,7 @@ const CLINIC_NAME = 'XYZ Dental Clinic';
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false // Necessary for managed cloud providers like Neon/Supabase
+    rejectUnauthorized: false 
   }
 });
 
@@ -23,7 +23,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// API Heartbeat / Health Check Endpoint
+// API Heartbeat Endpoint
 app.get('/', (req, res) => {
   res.json({ 
     status: "online", 
@@ -39,12 +39,11 @@ function generateId() {
 }
 
 async function getNextToken(date) {
-  // Select row count and explicitly convert it to an Integer alias
   const query = 'SELECT COUNT(*)::INT as total_count FROM appointments WHERE date = \$1';
   const result = await pool.query(query, [date]);
   
-  // FIX: Access index [0] first since result.rows is an array!
-  const count = result.rows && result.rows[0] ? result.rows[0].total_count : 0;
+  // 🔥 FIX: result.rows[0] se humne array ka pehla item access kiya hai
+  const count = (result.rows && result.rows[0]) ? result.rows[0].total_count : 0;
   const num = String(count + 1).padStart(3, '0');
   return 'BS-' + num;
 }

@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const CLINIC_NAME = 'XYZ Dental Clinic';
 
-// 1. Establish Database Pool Connection
+// 1. Database Connection Pool Setup
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -23,7 +23,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// API Online Heartbeat Check
+// API Online Routing Check
 app.get('/', (req, res) => {
   res.json({ 
     status: "online", 
@@ -42,7 +42,7 @@ async function getNextToken(date) {
   const query = 'SELECT COUNT(*)::INT as total_count FROM appointments WHERE date = \$1';
   const result = await pool.query(query, [date]);
   
-  // 🔥 CRITICAL FIXED LINE: Safely extracting data using array row index [0]
+  // 🔥 100% FIXED LINE: Safely extracting data using square brackets array index 0
   const count = (result.rows && result.rows.length > 0) ? parseInt(result.rows[0].total_count, 10) : 0;
   const num = String(count + 1).padStart(3, '0');
   return 'BS-' + num;

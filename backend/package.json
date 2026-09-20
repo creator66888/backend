@@ -1,0 +1,12 @@
+{
+  "name": "bright-smile-dental-api",
+  "version": "1.0.0",
+  "description": "Serverless API for the dentist clinic appointment booking system",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
+}

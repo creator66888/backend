@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const CLINIC_NAME = 'XYZ Dental Clinic';
 
-// 1. Database Connection Pool Setup
+// 1. Establish Database Connection Pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -14,7 +14,7 @@ const pool = new Pool({
   }
 });
 
-// 2. Strict Cross-Origin (CORS) Access Setup
+// 2. Strict Cross-Origin Resource Sharing Alignment for Frontend
 app.use(cors({
   origin: 'https://frontend-1-sage.vercel.app', 
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -23,7 +23,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// API Heartbeat Endpoint
+// API Online Heartbeat Check
 app.get('/', (req, res) => {
   res.json({ 
     status: "online", 
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// 3. Helper Functions for Postgres Operations
+// 3. Tracking Token Logic
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function generateId() {
@@ -42,8 +42,8 @@ async function getNextToken(date) {
   const query = 'SELECT COUNT(*)::INT as total_count FROM appointments WHERE date = \$1';
   const result = await pool.query(query, [date]);
   
-  // 🔥 FIX: result.rows[0] se humne array ka pehla item access kiya hai
-  const count = (result.rows && result.rows[0]) ? result.rows[0].total_count : 0;
+  // 🔥 FIXED EXTRACTION: Safely read rows[0] array properties to eliminate app exceptions
+  const count = result.rows && result.rows[0] ? parseInt(result.rows[0].total_count, 10) : 0;
   const num = String(count + 1).padStart(3, '0');
   return 'BS-' + num;
 }

@@ -16,7 +16,7 @@ const pool = new Pool({
 
 // 2. Strict Access Control Alignment for Frontend
 app.use(cors({
-  origin: 'https://vercel.app', 
+  origin: 'https://frontend-1-sage.vercel.app', 
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }));

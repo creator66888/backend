@@ -16,7 +16,7 @@ const pool = new Pool({
 
 // 2. Enable Cross-Origin Resource Sharing for your EXACT frontend URL
 app.use(cors({
-  origin: 'frontend-1-sage.vercel.app', // Replace with your actual frontend URL
+  origin: 'https://frontend-1-sage.vercel.app', // Replace with your actual frontend URL
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }));

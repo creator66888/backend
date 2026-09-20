@@ -6,15 +6,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const CLINIC_NAME = 'XYZ Dental Clinic';
 
-// 1. Database connection pool initialization
+// 1. Database Connection Pool Setup
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false // Necessary for managed cloud providers like Neon/Supabase
   }
 });
 
-// 2. Strict Access Control Alignment for Frontend
+// 2. Strict Cross-Origin (CORS) Access Setup
 app.use(cors({
   origin: 'https://frontend-1-sage.vercel.app', 
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -23,7 +23,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// API online heartbeat routing check
+// API Heartbeat / Health Check Endpoint
 app.get('/', (req, res) => {
   res.json({ 
     status: "online", 
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// 3. PostgreSQL Tracking Token Handler
+// 3. Helper Functions for Postgres Operations
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function generateId() {
@@ -39,19 +39,19 @@ function generateId() {
 }
 
 async function getNextToken(date) {
-  // CRITICAL SYNTAX CORRECTION: Count cast to integer via select wrapper array mapping
+  // Select row count and explicitly convert it to an Integer alias
   const query = 'SELECT COUNT(*)::INT as total_count FROM appointments WHERE date = \$1';
   const result = await pool.query(query, [date]);
   
-  // FIXED EXTRACTION: Safely read index 0 row properties to eliminate database exceptions
-  const count = result.rows[0] && result.rows[0].total_count ? parseInt(result.rows[0].total_count, 10) : 0;
+  // FIX: Access index [0] first since result.rows is an array!
+  const count = result.rows && result.rows[0] ? result.rows[0].total_count : 0;
   const num = String(count + 1).padStart(3, '0');
   return 'BS-' + num;
 }
 
-// 4. Client REST Resource Targets
+// 4. API Endpoints
 
-// CREATE APPOINTMENT
+// CREATE APPOINTMENT (POST)
 app.post('/api/appointments', async (req, res) => {
   const { service, name, phone, email } = req.body;
 
@@ -95,7 +95,7 @@ app.post('/api/appointments', async (req, res) => {
   }
 });
 
-// GET ALL APPOINTMENTS
+// GET ALL APPOINTMENTS (GET)
 app.get('/api/appointments', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM appointments ORDER BY created_at DESC');
@@ -106,7 +106,7 @@ app.get('/api/appointments', async (req, res) => {
   }
 });
 
-// UPDATE AN APPOINTMENT STATUS
+// UPDATE AN APPOINTMENT STATUS (PATCH)
 app.patch('/api/appointments/:id', async (req, res) => {
   const { status } = req.body;
 
@@ -132,7 +132,7 @@ app.patch('/api/appointments/:id', async (req, res) => {
   }
 });
 
-// DELETE AN APPOINTMENT
+// DELETE AN APPOINTMENT (DELETE)
 app.delete('/api/appointments/:id', async (req, res) => {
   try {
     const deleteQuery = 'DELETE FROM appointments WHERE id = \$1 RETURNING *';

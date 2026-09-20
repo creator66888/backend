@@ -23,6 +23,15 @@ app.use(cors({
 
 app.use(express.json());
 
+// Add this right below app.use(express.json());
+app.get('/', (req, res) => {
+  res.json({ 
+    status: "online", 
+    message: "Welcome to the XYZ Dental Clinic API Backend!" 
+  });
+});
+
+
 // 3. Helper Functions for Postgres Operations
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 

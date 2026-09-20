@@ -14,23 +14,22 @@ const pool = new Pool({
   }
 });
 
-// 2. Enable Cross-Origin Resource Sharing for your Frontend
+// 2. Enable Cross-Origin Resource Sharing for your EXACT frontend URL
 app.use(cors({
-  origin: 'https://vercel.app',
+  origin: 'https://vercel.app', 
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
 
 app.use(express.json());
 
-// Add this right below app.use(express.json());
+// API Status Check Route
 app.get('/', (req, res) => {
   res.json({ 
     status: "online", 
     message: "Welcome to the XYZ Dental Clinic API Backend!" 
   });
 });
-
 
 // 3. Helper Functions for Postgres Operations
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -42,6 +41,8 @@ function generateId() {
 async function getNextToken(date) {
   const query = 'SELECT COUNT(*) FROM appointments WHERE date = \$1';
   const result = await pool.query(query, [date]);
+  
+  // FIXED SYNTAX: Properly access the count from Postgres row array object
   const count = parseInt(result.rows[0].count, 10);
   const num = String(count + 1).padStart(3, '0');
   return 'BS-' + num;

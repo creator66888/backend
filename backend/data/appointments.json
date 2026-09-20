@@ -1,0 +1,30 @@
+{
+  "appointments": [
+    {
+      "id": "id-c54fgvtbk7d",
+      "token": "BS-001",
+      "name": "aneeq hassan",
+      "phone": "+923462006288",
+      "email": "aneeq.hassan2006@gmail.com",
+      "service": "Teeth Cleaning",
+      "date": "2026-09-16",
+      "day": "Wednesday",
+      "time": "09:00",
+      "createdAt": "2026-09-16T16:36:25.189Z",
+      "status": "pending"
+    },
+    {
+      "id": "id-e0dalgqrbxi",
+      "token": "BS-002",
+      "name": "aneeq hassan",
+      "phone": "+923462006288",
+      "email": "aneeq.hassan2006@gmail.com",
+      "service": "Teeth Cleaning",
+      "date": "2026-09-16",
+      "day": "Wednesday",
+      "time": "09:00",
+      "createdAt": "2026-09-16T16:37:55.648Z",
+      "status": "pending"
+    }
+  ]
+}

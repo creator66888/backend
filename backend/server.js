@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const CLINIC_NAME = 'XYZ Dental Clinic';
 
-// 1. Establish Database Connection Pool
+// 1. Establish Database Pool Connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -14,7 +14,7 @@ const pool = new Pool({
   }
 });
 
-// 2. Strict Cross-Origin Resource Sharing Alignment for Frontend
+// 2. Strict Cross-Origin (CORS) Access Setup for Frontend
 app.use(cors({
   origin: 'https://frontend-1-sage.vercel.app', 
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// 3. Tracking Token Logic
+// 3. Helper Functions for Postgres Operations
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function generateId() {
@@ -42,8 +42,8 @@ async function getNextToken(date) {
   const query = 'SELECT COUNT(*)::INT as total_count FROM appointments WHERE date = \$1';
   const result = await pool.query(query, [date]);
   
-  // 🔥 FIXED EXTRACTION: Safely read rows[0] array properties to eliminate app exceptions
-  const count = result.rows && result.rows[0] ? parseInt(result.rows[0].total_count, 10) : 0;
+  // 🔥 CRITICAL FIXED LINE: Safely extracting data using array row index [0]
+  const count = (result.rows && result.rows.length > 0) ? parseInt(result.rows[0].total_count, 10) : 0;
   const num = String(count + 1).padStart(3, '0');
   return 'BS-' + num;
 }

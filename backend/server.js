@@ -6,24 +6,24 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const CLINIC_NAME = 'XYZ Dental Clinic';
 
-// 1. Establish Database Pool Connection
+// 1. Database connection pool initialization
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false // Necessary for cloud DBs like Neon or Supabase
+    rejectUnauthorized: false
   }
 });
 
-// 2. Enable Cross-Origin Resource Sharing for your EXACT frontend URL
+// 2. Strict Access Control Alignment for Frontend
 app.use(cors({
-  origin: 'https://frontend-1-sage.vercel.app', 
+  origin: 'https://vercel.app', 
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
 
 app.use(express.json());
 
-// API Status Check Route
+// API online heartbeat routing check
 app.get('/', (req, res) => {
   res.json({ 
     status: "online", 
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// 3. Helper Functions for Postgres Operations
+// 3. PostgreSQL Tracking Token Handler
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function generateId() {
@@ -39,16 +39,17 @@ function generateId() {
 }
 
 async function getNextToken(date) {
-  // FIXED SYNTAX: Explicitly alias as total_count to avoid parsing exceptions
-  const query = 'SELECT COUNT(*) as total_count FROM appointments WHERE date = \$1';
+  // CRITICAL SYNTAX CORRECTION: Count cast to integer via select wrapper array mapping
+  const query = 'SELECT COUNT(*)::INT as total_count FROM appointments WHERE date = \$1';
   const result = await pool.query(query, [date]);
   
-  const count = parseInt(result.rows[0].total_count, 10);
+  // FIXED EXTRACTION: Safely read index 0 row properties to eliminate database exceptions
+  const count = result.rows[0] && result.rows[0].total_count ? parseInt(result.rows[0].total_count, 10) : 0;
   const num = String(count + 1).padStart(3, '0');
   return 'BS-' + num;
 }
 
-// 4. API Endpoints
+// 4. Client REST Resource Targets
 
 // CREATE APPOINTMENT
 app.post('/api/appointments', async (req, res) => {
